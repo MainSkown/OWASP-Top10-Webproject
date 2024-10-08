@@ -1,0 +1,11 @@
+body {
+    background: linear-gradient(to top, #000000, #434343);
+    color: #d3d3d3;
+    font-family: Arial, sans-serif;
+    height: 100vh;
+    margin: 0;
+    display: flex;
+    justify-content: center;    
+    overflow: hidden;
+    position: relative;
+}
