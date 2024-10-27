@@ -8,7 +8,7 @@
       <h1>CatWorld</h1>
     </div>
     <div class="right-header">
-      <Avatar :hash="'username'" :size="50" />
+      <Avatar :userName="'username'" :size="50" />
     </div>
   </div>
 </template>

@@ -13,7 +13,7 @@ import * as jdenticon from 'jdenticon'
 export default defineComponent({
   name: 'AvatarIcon',
   props: {
-    hash: {
+    userName: {
       type: String,
       required: true
     },
@@ -24,7 +24,7 @@ export default defineComponent({
   },
   computed: {
     avatarId(): string {
-      return `avatar-${this.hash}`
+      return `avatar-${this.userName}`
     }
   },
   mounted() {
@@ -32,7 +32,7 @@ export default defineComponent({
   },
   methods: {
     generateAvatar() {
-      jdenticon.update(`#${this.avatarId}`, this.hash)
+      jdenticon.update(`#${this.avatarId}`, this.userName)
     }
   }
 })
