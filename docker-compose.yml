@@ -1,0 +1,31 @@
+version: '3'
+services:
+  frontend:
+    build: ./frontend
+    container_name: OWASP_frontend
+    ports:
+      -"3001:80"
+    depends_on:
+      - backend
+  backend:
+    build: ./backend
+    ports:
+      -"3000:3000"
+    depends_on:
+      - db
+      
+  db:
+    build: ./database
+    container_name: OWASP_database
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: OWASP_database
+      MYSQL_USER: testuser
+      MYSQL_PASSWORD: testpassword
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+  
+volumes:
+  db_data:
