@@ -11,25 +11,27 @@ services:
     build: ./backend
     container_name: OWASP_backend
     environment:
-      - PORT=3001
-      - DEFAULT_ROUTE=/api
+      - PORT=${PORT}
+      - DEFAULT_ROUTE=${DEFAULT_ROUTE}
+      - DATABASE_HOST=db
+      - DATABASE_USER=${DATABASE_USER}
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
     ports:
-      - "3001:3001"
+      - "${PORT}:${PORT}"
     depends_on:
       - db
-      
   db:
     build: ./database
     container_name: OWASP_database
     environment:
-      MYSQL_ROOT_PASSWORD: rootpassword
-      MYSQL_DATABASE: OWASP_database
-      MYSQL_USER: testuser
-      MYSQL_PASSWORD: testpassword
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${DATABASE_NAME}
+      - MYSQL_USER=${DATABASE_USER}
+      - MYSQL_PASSWORD=${DATABASE_PASSWORD}
     ports:
-      - "3306:3306"
+      - "${DATABASE_PORT}:3306"
     volumes:
       - db_data:/var/lib/mysql
   
 volumes:
-  db_data:
+  db_data: {}
