@@ -34,6 +34,7 @@ export class SQLRepo {
       database: database,
       host: host,
       port: port,
+      multipleStatements: true
     });
    
     console.log("Connected to database");
@@ -91,13 +92,13 @@ export class SQLRepo {
     content: string,
     user_id: number
   ): Promise<void> {
-    // Niebezpieczne zapytanie SQL, które jest podatne na SQL Injection
+    // Dangerous SQL query that is vulnerable to SQL Injection
     const query = `INSERT INTO posts (title, content, user_id) VALUES ('${title}', '${content}', ${user_id})`;
     await this.pool.query(query);
   }
 
   async createUser(username: string, password: string): Promise<void> {
-    // Niebezpieczne zapytanie SQL, które jest podatne na SQL Injection
+    // Dangerous SQL query that is vulnerable to SQL Injection
     const query = `INSERT INTO users (username, password, isAdmin) VALUES ('${username}', '${password}')`;
     await this.pool.query(query);
   }
@@ -107,8 +108,15 @@ export class SQLRepo {
     user_id: number,
     content: string
   ): Promise<void> {
-    // Niebezpieczne zapytanie SQL, które jest podatne na SQL Injection
-    const query = `INSERT INTO comments (post_id, user_id, content) VALUES (${post_id}, ${user_id}, '${content}')`;
-    await this.pool.query(query);
+    // Dangerous SQL query that is vulnerable to SQL Injection
+    try {
+      const query = `INSERT INTO comments (post_id, user_id, content) VALUES (${post_id}, ${user_id}, ${content})`;
+      console.log(query);
+      await this.pool.query(query);
+    } catch (e) {
+      console.log('Skipping query')
+      // XSS attack breaks in case of special characters, so this is a work around to enable both attacks
+      await this.pool.query('INSERT INTO comments (post_id, user_id, content) VALUES (?, ?, ?)', [post_id, user_id, content]);
+    }
   }
 }

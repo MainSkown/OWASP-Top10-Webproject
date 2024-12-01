@@ -34,6 +34,12 @@
     <!-- Comment section -->
 
     <div v-if="showComments" class="comment_section">
+      <!-- Post comment -->
+      <div class="comment-input-container">
+        <input class="comment-input" type="text" placeholder="Add a comment" v-model="user_comment"/>
+        <button @click="postComment" class="comment-button">Post</button>
+      </div>
+      <!-- Comments -->
       <div class="comment" v-for="comment in comments" :key="comment.id">
         <!-- Autor -->
         <div class="comment_header">
@@ -63,17 +69,33 @@ const likes = ref(Math.floor(Math.random() * 1000))
 const showComments = ref(false)
 
 const comments = ref<CommentData[]>([])
-
-axios.get(`/api/post/${props.data.id}/comments`).then((response) => {
-  const temp: CommentData[] = response.data
-  temp.forEach((comment) => {
-    axios.get('/api/user/' + comment.user_id).then((response) => {
-      comment.username = response.data.username
+function updateComments() {
+  axios.get(`/api/post/${props.data.id}/comments`).then((response) => {
+    const temp: CommentData[] = response.data
+    temp.forEach((comment) => {
+      axios.get('/api/user/' + comment.user_id).then((response) => {
+        comment.username = response.data.username
+      })
     })
+    comments.value = temp   
   })
-  comments.value = temp
-  console.log('comments:', comments.value)
-})
+}
+
+updateComments()
+
+const user_comment = ref('')
+
+function postComment() {
+  axios.post(`/api/post/${props.data.id}/comment`, {
+    content: user_comment.value,
+    user_id: 1,
+  }).then(() => {
+    user_comment.value = ''
+    updateComments()
+  }).catch((error) => {
+    console.error(error)
+  })
+}
 
 const toggleLike = () => {
   isLiked.value = !isLiked.value
