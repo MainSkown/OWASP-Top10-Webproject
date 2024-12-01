@@ -12,9 +12,10 @@ const route = process.env.DEFAULT_ROUTE || "/api";
 
 const repo = new SQLRepo(
     process.env.DATABASE_USER || 'root',
-    process.env.DATABASE_PASSWORD || 'password',
-    process.env.DATABASE_NAME || 'database',
-    process.env.DATABASE_HOST || 'db',  
+    process.env.DATABASE_PASSWORD || 'rootpassword',
+    process.env.DATABASE_NAME || 'OWASP_database',
+    process.env.DATABASE_HOST || undefined,  
+    process.env.DATABASE_HOST ? undefined : 3306
 );
 
 repo.getPosts().then((posts) => {

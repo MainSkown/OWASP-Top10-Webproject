@@ -27,12 +27,13 @@ export type comment = {
 export class SQLRepo {
   private pool: mysql.Pool;
 
-  constructor(user: string, password: string, database: string, host: string) {
+  constructor(user: string, password: string, database: string, host: string | undefined, port: number | undefined) {
     this.pool = mysql.createPool({
       user: user,
       password: password,
       database: database,
       host: host,
+      port: port,
     });
    
     console.log("Connected to database");
