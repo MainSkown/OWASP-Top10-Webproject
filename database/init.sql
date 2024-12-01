@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS comments (
     id INT AUTO_INCREMENT PRIMARY KEY,
     post_id INT NOT NULL,    -- Links comment to a specific post
     user_id INT,             -- Links comment to the user who made it
-    comment_text TEXT NOT NULL,
+    content TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
@@ -47,7 +47,7 @@ VALUES
     ('A cute cat', 'https://cdn2.thecatapi.com/images/djnExlK9y.jpg', 4);
 
 -- Insert comments for multiple posts
-INSERT INTO comments (post_id, user_id, comment_text)
+INSERT INTO comments (post_id, user_id, content)
 VALUES 
     (1, 1, 'Great post by catEnjoyer!'),
     (1, 2, 'Interesting thoughts!'),

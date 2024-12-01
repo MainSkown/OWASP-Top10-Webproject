@@ -1,31 +1,27 @@
 <template>
   <div class="card_container">
-    <PostCard :data="post" />
+    <PostCard v-for="post in posts" :key="post.id" :data="post" />
   </div>
 </template>
 
 <script setup lang="ts">
 import type { Post } from '@/components/types'
 import PostCard from '../components/PostCard.vue'
+import axios from 'axios'
+import { ref } from 'vue';
 
-const post: Post = {
-  id: '1',
-  title: 'Cat',
-  content: 'https://www.purina.pl/sites/default/files/2021-02/CAT%20HERO_0012_Maine_coon.jpg',
-  likes: 281,
-  comments: [
-    {
-      id: '2',
-      autor: 'John',
-      content: 'This is a comment'
-    }
-  ]
-}
+const posts = ref<Post[]>([])
+
+axios.get('/api/posts').then((response) => {
+  posts.value = response.data;
+});
+
 </script>
 
 <style>
 .card_container {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   border-radius: 50%;

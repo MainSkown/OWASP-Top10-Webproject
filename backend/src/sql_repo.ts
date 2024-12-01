@@ -1,6 +1,6 @@
 import mysql from "mysql2/promise";
 
-export type post = {
+export type Post = {
   id: number;
   title: string;
   content: string;
@@ -8,7 +8,7 @@ export type post = {
   date: string;
 };
 
-export type user = {
+export type User = {
   id: number;
   username: string;
   password: string;
@@ -16,7 +16,7 @@ export type user = {
   created_at: string;
 };
 
-export type comment = {
+export type Comment = {
   id: number;
   post_id: number;
   user_id: number;
@@ -39,43 +39,51 @@ export class SQLRepo {
     console.log("Connected to database");
   }
 
-  async getPosts(): Promise<post[]> {
+  async getPosts(): Promise<Post[]> {
     const [rows] = await this.pool.query("SELECT * FROM posts");
-    return rows as post[];
+    return rows as Post[];
   }
 
-  async getPost(id: number): Promise<post> {
+  async getPost(id: number): Promise<Post> {
     const [rows] = await this.pool.query<mysql.RowDataPacket[]>(
       "SELECT * FROM posts WHERE id = ?",
       [id]
     );
-    return rows[0] as post;
+    return rows[0] as Post;
   }
 
-  async getUsers(): Promise<user[]> {
+  async getUsers(): Promise<User[]> {
     const [rows] = await this.pool.query("SELECT * FROM users");
-    return rows as user[];
+    return rows as User[];
   }
 
-  async getUser(id: number): Promise<user> {
+  async getUser(id: number): Promise<User> {
     const [rows] = await this.pool.query<mysql.RowDataPacket[]>(
       "SELECT * FROM users WHERE id = ?",
       [id]
     );
-    return rows[0] as user;
+    return rows[0] as User;
   }
 
-  async getComments(): Promise<comment[]> {
+  async getComments(): Promise<Comment[]> {
     const [rows] = await this.pool.query("SELECT * FROM comments");
-    return rows as comment[];
+    return rows as Comment[];
   }
 
-  async getComment(id: number): Promise<comment> {
+  async getComment(id: number): Promise<Comment> {
     const [rows] = await this.pool.query<mysql.RowDataPacket[]>(
       "SELECT * FROM comments WHERE id = ?",
       [id]
     );
-    return rows[0] as comment;
+    return rows[0] as Comment;
+  }
+
+  async getPostComments(post_id: number): Promise<Comment[]> {
+    const [rows] = await this.pool.query(
+      "SELECT * FROM comments WHERE post_id = ?",
+      [post_id]
+    );
+    return rows as Comment[];
   }
 
   async createPost(

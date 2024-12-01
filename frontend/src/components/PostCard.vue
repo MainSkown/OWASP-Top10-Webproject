@@ -12,54 +12,68 @@
     <!-- Reaction section -->
     <div class="reaction-section">
       <!-- Heart button -->
-      <button @click="toggleLike" :class="{ liked: isLiked }" class="heart-button">        
+      <button @click="toggleLike" :class="{ liked: isLiked }" class="heart-button">
         <span class="material-icons" :style="{ color: isLiked ? 'red' : 'black' }">
           {{ isLiked ? 'favorite' : 'favorite_border' }}
         </span>
-        <span>{{ data.likes + (isLiked ? 1 : 0)}}</span>
+        <span>{{ likes + (isLiked ? 1 : 0) }}</span>
       </button>
 
       <!-- Comment button -->
-      <button @click="toggleComments" class="heart-button">        
-        <span>{{ data.comments.length }}</span>
-        <span class="material-icons"> chat_bubble_outline </span>   
+      <button @click="toggleComments" class="heart-button">
+        <span>{{ comments.length }}</span>
+        <span class="material-icons"> chat_bubble_outline </span>
       </button>
 
       <!-- Share button -->
       <button class="heart-button">
-        <span class="material-icons"> share </span>        
+        <span class="material-icons"> share </span>
       </button>
     </div>
 
     <!-- Comment section -->
-    
+
     <div v-if="showComments" class="comment_section">
-      <div class="comment" v-for="comment in data.comments" :key="comment.id">
+      <div class="comment" v-for="comment in comments" :key="comment.id">
         <!-- Autor -->
         <div class="comment_header">
-          <Avatar :userName="comment.autor" :size="30" />
-          <span> {{ comment.autor }}</span>
+          <Avatar :userName="comment.username" :size="30" />
+          <span> {{ comment.username }}</span>
         </div>
 
         <!-- Content -->
         <div style="padding: 10px" v-html="comment.content"></div>
       </div>
     </div>
-   
   </div>
 </template>
 
 <script setup lang="ts">
-import type { Post } from './types'
+import type { Post, CommentData } from './types'
 import Avatar from './Avatar.vue'
 import { ref } from 'vue'
+import axios from 'axios'
 
-defineProps<{
+const props = defineProps<{
   data: Post
 }>()
 
 const isLiked = ref(false)
+const likes = ref(Math.floor(Math.random() * 1000))
 const showComments = ref(false)
+
+const comments = ref<CommentData[]>([])
+
+axios.get(`/api/post/${props.data.id}/comments`).then((response) => {
+  const temp: CommentData[] = response.data
+  temp.forEach((comment) => {
+    axios.get('/api/user/' + comment.user_id).then((response) => {
+      comment.username = response.data.username
+    })
+  })
+  comments.value = temp
+  console.log('comments:', comments.value)
+})
 
 const toggleLike = () => {
   isLiked.value = !isLiked.value
@@ -81,7 +95,7 @@ const toggleComments = () => {
   padding: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   max-width: 400px;
-  margin: 10px; 
+  margin: 10px;
 }
 
 .card:hover {
