@@ -1,7 +1,9 @@
 <template>
+  <div class="page_container">
   <div class="card_container">
     <PostCard v-for="post in posts" :key="post.id" :data="post" />
   </div>
+  </div>  
 </template>
 
 <script setup lang="ts">
@@ -24,8 +26,11 @@ axios.get('/api/posts').then((response) => {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  border-radius: 50%;
-  overflow: hidden;
-  padding: 3px;
+}
+
+.page_container {
+  overflow-y: scroll;
+  height: 87vh;
+  width: 100vw;
 }
 </style>
