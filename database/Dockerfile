@@ -6,9 +6,9 @@ COPY ./init.sql /docker-entrypoint-initdb.d/
 
 # Environment variables for MySQL configuration
 ENV MYSQL_ROOT_PASSWORD=rootpassword
-ENV MYSQL_DATABASE=web_hacking
-ENV MYSQL_USER=testuser
-ENV MYSQL_PASSWORD=testpassword
+ENV MYSQL_DATABASE=OWASP_database
+ENV MYSQL_USER=root
+ENV MYSQL_PASSWORD=rootpassword
 
 # Expose MySQL port (optional, typically done in docker-compose.yml)
 EXPOSE 3306
