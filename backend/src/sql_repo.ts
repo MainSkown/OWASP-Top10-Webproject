@@ -97,12 +97,6 @@ export class SQLRepo {
     await this.pool.query(query);
   }
 
-  async createUser(username: string, password: string): Promise<void> {
-    // Dangerous SQL query that is vulnerable to SQL Injection
-    const query = `INSERT INTO users (username, password, isAdmin) VALUES ('${username}', '${password}')`;
-    await this.pool.query(query);
-  }
-
   async createComment(
     post_id: number,
     user_id: number,
@@ -118,5 +112,38 @@ export class SQLRepo {
       // XSS attack breaks in case of special characters, so this is a work around to enable both attacks
       await this.pool.query('INSERT INTO comments (post_id, user_id, content) VALUES (?, ?, ?)', [post_id, user_id, content]);
     }
+  }
+
+  async createUser(username: string, password: string): Promise<void> {
+    // Check if user already exists
+    const [rows] = await this.pool.query<mysql.RowDataPacket[]>(
+      "SELECT * FROM users WHERE username = ?",
+      [username]
+    );
+
+    if (rows.length > 0) {
+      throw new Error("User already exists");
+    }
+    try {
+    // Dangerous SQL query that is vulnerable to SQL Injection
+    const query = `INSERT INTO users (username, password, isAdmin) VALUES ('${username}', '${password}')`;
+    await this.pool.query(query);
+    } catch (e) {
+      // if someone doesn't want an admin, that creates an error
+      await this.pool.query('INSERT INTO users (username, password) VALUES (?, ?)', [username, password]);
+    }
+  }
+
+  async loginUser(username: string, password: string): Promise<User> {
+    const [rows] = await this.pool.query<mysql.RowDataPacket[]>(
+      "SELECT * FROM users WHERE username = ? AND password = ?",
+      [username, password]
+    );
+
+    if (rows.length === 0) {
+      throw new Error("Invalid username or password");
+    }
+
+    return rows[0] as User;
   }
 }

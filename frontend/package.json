@@ -16,7 +16,8 @@
     "axios": "^1.7.7",
     "jdenticon": "^3.3.0",
     "vue": "^3.4.29",
-    "vue-router": "^4.3.3"
+    "vue-router": "^4.3.3",
+    "vue-toast-notification": "^3"
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.8.0",
