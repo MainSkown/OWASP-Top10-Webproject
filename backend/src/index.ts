@@ -121,7 +121,7 @@ app
     const id = parseInt(req.params.id);
     const token = req.headers.authorization?.split(" ")[1];
 
-    if (!token) {
+    if (typeof token !== "string" || token === "null") {
       res.status(401).send("Unauthorized");
       return;
     }
@@ -136,6 +136,23 @@ app
       console.error(e);
     }
   });
+
+// Check if admin
+app.get(`${route}/admin`, async (req: Request, res: Response) => {
+  try{
+  const token = req.headers.authorization?.split(" ")[1];
+  if (typeof token !== "string" || token === "null") {
+    res.status(401).send("You are not an admin");
+    return;
+  }
+
+  const { isAdmin } = verifyToken(token);
+  res.send(isAdmin ? "You are an admin" : "You are not an admin");
+  } catch (e: any) {
+    res.status(500).send(e.message);
+    console.error(e);
+  }
+});
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}${route}`);
