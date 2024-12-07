@@ -52,6 +52,6 @@ VALUES
     (1, 1, 'Great post by catEnjoyer!'),
     (1, 2, 'Interesting thoughts!'),
     (1, 3, 'Looking forward to more content.'),
-    (2, 1, 'Nice picture, admin!'),
+    (2, 1, 'Nice picture!'),
     (2, 2, 'This post is amazing!'),
     (3, 3, 'Really cool picture!');

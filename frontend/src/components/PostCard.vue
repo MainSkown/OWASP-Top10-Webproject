@@ -36,7 +36,14 @@
     <div v-if="showComments" class="comment_section">
       <!-- Post comment -->
       <div class="comment-input-container">
-        <input class="comment-input" type="text" placeholder="Add a comment" v-model="user_comment"/>
+        <input
+          class="comment-input"
+          type="text"
+          :placeholder="isLoggedIn ? 'Add a comment' : 'Login to comment'"
+          :disabled="!isLoggedIn"
+          :class="{ disabled: !isLoggedIn }"
+          v-model="user_comment"
+        />
         <button @click="postComment" class="comment-button">Post</button>
       </div>
       <!-- Comments -->
@@ -59,6 +66,15 @@ import type { Post, CommentData } from './types'
 import Avatar from './Avatar.vue'
 import { ref } from 'vue'
 import axios from 'axios'
+import { useToast } from 'vue-toast-notification'
+
+const isLoggedIn = ref(!!localStorage.getItem('token'))
+
+window.addEventListener('login-change-state', () => {
+  isLoggedIn.value = !!localStorage.getItem('token')
+})
+
+const $toast = useToast()
 
 const props = defineProps<{
   data: Post
@@ -69,16 +85,19 @@ const likes = ref(Math.floor(Math.random() * 1000))
 const showComments = ref(false)
 
 const comments = ref<CommentData[]>([])
-function updateComments() {
-  axios.get(`/api/post/${props.data.id}/comments`).then((response) => {
+
+async function updateComments() {
+  try {
+    const response = await axios.get(`/api/post/${props.data.id}/comments`)
     const temp: CommentData[] = response.data
-    temp.forEach((comment) => {
-      axios.get('/api/user/' + comment.user_id).then((response) => {
-        comment.username = response.data.username
-      })
-    })
-    comments.value = temp   
-  })
+    for (const comment of temp) {
+      const userResponse = await axios.get('/api/user/' + comment.user_id)
+      comment.username = userResponse.data.username
+    }
+    comments.value = temp
+  } catch (error) {
+    console.error(error)
+  }
 }
 
 updateComments()
@@ -86,15 +105,30 @@ updateComments()
 const user_comment = ref('')
 
 function postComment() {
-  axios.post(`/api/post/${props.data.id}/comment`, {
-    content: user_comment.value,
-    user_id: 1,
-  }).then(() => {
-    user_comment.value = ''
-    updateComments()
-  }).catch((error) => {
-    console.error(error)
-  })
+  const token = localStorage.getItem('token')
+  if (!token) {
+    $toast.error('You need to be logged in to comment')
+    return
+  }
+  axios
+    .post(
+      `/api/post/${props.data.id}/comment`,
+      {
+        content: user_comment.value
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
+    )
+    .then(() => {
+      user_comment.value = ''
+      updateComments()
+    })
+    .catch((error) => {
+      console.error(error)
+    })
 }
 
 const toggleLike = () => {
@@ -118,10 +152,6 @@ const toggleComments = () => {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   max-width: 400px;
   margin: 10px;
-}
-
-.card:hover {
-  transform: scale(1.005);
 }
 
 .card h1 {
@@ -183,14 +213,25 @@ const toggleComments = () => {
   flex-direction: column;
   margin-top: 10px;
   padding: 10px;
-  border-radius: 15px;
-  background-color: #f9f9f9;
+  border: 4px solid transparent;
+  border-radius: 20px;
+  background: linear-gradient(45deg, #ede7e7, #fcd1e0), linear-gradient(45deg, #461212, #f01763);
+  background-clip: padding-box, border-box;
+  background-origin: padding-box, border-box;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   color: #333;
   width: 80%;
+  gap: 10px;
+  position: relative;
+}
+
+.comment_header {
+  display: flex;
+  align-items: center;
+  font-weight: bolder;
   gap: 10px;
 }
 
@@ -199,5 +240,41 @@ const toggleComments = () => {
   align-items: center;
   font-weight: bolder;
   gap: 10px;
+}
+
+.comment-input-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  width: 85%;
+}
+
+.comment-button {
+  background: linear-gradient(45deg, #7e5959, #f55d92);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  align-self: flex-end;
+}
+
+.comment-input {
+  width: 96%;
+  height: 5vh;
+  padding: 5px;  
+  border: 2px solid transparent;
+  border-radius: 5px;
+  background: linear-gradient(45deg, #ede7e7, #fcd1e0), linear-gradient(45deg, #461212, #f01763);
+  background-clip: padding-box, border-box;
+  background-origin: padding-box, border-box;
+  color: #333;
+}
+
+.comment-input.disabled {
+  background-color: #f9f9f9;
+  cursor: not-allowed;
 }
 </style>

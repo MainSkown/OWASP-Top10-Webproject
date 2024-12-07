@@ -88,6 +88,7 @@ const login = async () => {
     showLoginDialog.value = false
     username.value = loginUsername.value
     localStorage.setItem('username', loginUsername.value)
+    window.dispatchEvent(new Event('login-change-state'))
     $toast.open({
       message: 'Login successful',
       type: 'success'
@@ -106,7 +107,7 @@ const register = async () => {
     })
     console.log('Registration successful:', response.data)
     showRegisterDialog.value = false
-    $toast.success('Registration successful')
+    $toast.success('Registration successful')    
   } catch (error) {
     console.error('Registration failed:', error)
     $toast.error('Registration failed')
@@ -121,6 +122,7 @@ const logout = () => {
     message: 'Logout successful',
     type: 'success'
   })
+  window.dispatchEvent(new Event('login-change-state'))
 }
 </script>
 
@@ -186,6 +188,7 @@ const logout = () => {
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 1000;
 }
 
 .dialog {
