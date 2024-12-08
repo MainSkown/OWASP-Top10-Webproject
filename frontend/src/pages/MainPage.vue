@@ -1,6 +1,6 @@
 <template>
   <div class="page_container">
-    <div class="button_container">
+    <div v-if="loggedIn" class="button_container">
       <button class="add_button" @click="showCreatePostDialog = true">
         <span class="material-icons icon"> add_circle </span>
         <span> Add post </span>
@@ -40,6 +40,12 @@ const posts = ref<Post[]>([])
 const showCreatePostDialog = ref(false)
 const newPostTitle = ref('')
 const newPostUrl = ref('')
+
+const loggedIn = ref(!!localStorage.getItem('token'))
+
+window.addEventListener('login-change-state', () => {
+  loggedIn.value = !!localStorage.getItem('token')
+})
 
 const updatePosts = async () => {
   try {
@@ -121,6 +127,7 @@ const createPost = async () => {
   font-weight: bold;
   gap: 10px;
   padding: 20px;
+  cursor: pointer;
 }
 
 .add_button:hover {

@@ -148,6 +148,7 @@ const logout = () => {
     background-clip: text;
     -webkit-text-fill-color: transparent;
   }
+  cursor: pointer;
 }
 
 .logo {
@@ -176,6 +177,7 @@ const logout = () => {
   border: 2px solid #461212;
   padding: 5px 10px;
   border-radius: 5px;
+  cursor: pointer;
 }
 
 .user-header {

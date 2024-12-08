@@ -1,40 +1,31 @@
 <template>
-  <div class="card">    
-    <!-- Title -->
-    <div>
-      <!-- Use v-html to allow xss attack -->
+  <div class="card">
+    <div class="card-header">
+      <div class="user_avatar">
+        <Avatar v-if="username !== ''" :userName="username" :size="20" />
+        <h3>{{ username }}</h3>
+      </div>
       <h1 v-html="data.title"></h1>
     </div>
-    <!-- Image -->
     <div class="image">
       <img :src="data.content" alt="Image" width="100%" height="100%" />
     </div>
-    <!-- Reaction section -->
     <div class="reaction-section">
-      <!-- Heart button -->
       <button @click="toggleLike" :class="{ liked: isLiked }" class="heart-button">
         <span class="material-icons" :style="{ color: isLiked ? 'red' : 'black' }">
           {{ isLiked ? 'favorite' : 'favorite_border' }}
         </span>
         <span>{{ likes + (isLiked ? 1 : 0) }}</span>
       </button>
-
-      <!-- Comment button -->
       <button @click="toggleComments" class="heart-button">
         <span>{{ comments.length }}</span>
         <span class="material-icons"> chat_bubble_outline </span>
       </button>
-
-      <!-- Share button -->
       <button class="heart-button">
         <span class="material-icons"> share </span>
       </button>
     </div>
-
-    <!-- Comment section -->
-
     <div v-if="showComments" class="comment_section">
-      <!-- Post comment -->
       <div class="comment-input-container">
         <input
           class="comment-input"
@@ -46,15 +37,11 @@
         />
         <button @click="postComment" class="comment-button">Post</button>
       </div>
-      <!-- Comments -->
       <div class="comment" v-for="comment in comments" :key="comment.id">
-        <!-- Autor -->
         <div class="comment_header">
           <Avatar :userName="comment.username" :size="30" />
           <span> {{ comment.username }}</span>
         </div>
-
-        <!-- Content -->
         <div style="padding: 10px" v-html="comment.content"></div>
       </div>
     </div>
@@ -83,16 +70,31 @@ const props = defineProps<{
 const isLiked = ref(false)
 const likes = ref(Math.floor(Math.random() * 1000))
 const showComments = ref(false)
-
 const comments = ref<CommentData[]>([])
+const user_comment = ref('')
+
+const username = ref('')
+
+async function getUsername(user_id: number): Promise<string> {
+  try {
+    const response = await axios.get('/api/user/' + user_id)
+    return response.data.username
+  } catch (error) {
+    console.error(error)
+    return 'Unknown'
+  }
+}
+
+getUsername(props.data.user_id).then((name) => {
+  username.value = name
+})
 
 async function updateComments() {
   try {
     const response = await axios.get(`/api/post/${props.data.id}/comments`)
     const temp: CommentData[] = response.data
     for (const comment of temp) {
-      const userResponse = await axios.get('/api/user/' + comment.user_id)
-      comment.username = userResponse.data.username
+      comment.username = await getUsername(comment.user_id)
     }
     comments.value = temp
   } catch (error) {
@@ -101,8 +103,6 @@ async function updateComments() {
 }
 
 updateComments()
-
-const user_comment = ref('')
 
 function postComment() {
   const token = localStorage.getItem('token')
@@ -162,7 +162,33 @@ const toggleComments = () => {
 .card h1 {
   font-size: 1.5em;
   margin-bottom: 10px;
+  margin-top: 25px;
   color: #333;
+}
+
+.card-header {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  gap: 10px;
+  position: relative;
+  margin-bottom: 15px;
+}
+
+.card-header .user_avatar {
+  position: absolute;
+  display: flex;
+  left: -5px;
+  align-items: center;
+  gap: 5px;
+}
+
+.card-header .user_avatar h3 {
+  margin: 0;
+  background: linear-gradient(to top right, #461212, #f01763);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .image {
