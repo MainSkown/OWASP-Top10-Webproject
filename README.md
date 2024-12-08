@@ -57,6 +57,8 @@ docker compose down
 docker compose up --build # or -d to run in background
 ```
 
+If it didn't help, use command from uninstalling the project and than install it again.
+
 ### manual
 
 To restart the project manualy you need to run following commands:
@@ -69,7 +71,7 @@ docker build -t owasp-top10-db .
 docker run -d -p 3306:3306 --name owasp-top10-db owasp-top10-db
 ```
 
-## Stopping the project
+## Uninstalling the project
 
 ### docker-compose
 
