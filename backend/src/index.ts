@@ -136,7 +136,25 @@ app
       console.error(e);
     }
   });
+app.post(`${route}/post`, async (req: Request, res: Response) => {
+  try {
+    const { title, content } = req.body;
+    const token = req.headers.authorization?.split(" ")[1];
+    
+    if (typeof token !== "string" || token === "null") {
+      res.status(401).send("Unauthorized");
+      return;
+    }
 
+    const { user_id } = verifyToken(token); 
+
+    await repo.createPost(title, content, user_id);
+    res.sendStatus(201);
+  } catch (e: any) {
+    res.status(500).send(e.message);
+    console.error(e);
+  }
+})
 // Check if admin
 app.get(`${route}/admin`, async (req: Request, res: Response) => {
   try{

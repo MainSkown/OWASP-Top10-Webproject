@@ -1,5 +1,5 @@
 <template>
-  <div class="card">
+  <div class="card">    
     <!-- Title -->
     <div>
       <!-- Use v-html to allow xss attack -->
@@ -145,13 +145,18 @@ const toggleComments = () => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: #fff;
+  border: 4px solid transparent;
+  background-image: linear-gradient(white, white), linear-gradient(45deg, #461212, #f01763);
+  background-clip: padding-box, border-box;
+  background-origin: padding-box, border-box;
   border-radius: 15px;
+  border: 4px solid transparent;
   overflow: hidden;
   padding: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   max-width: 400px;
   margin: 10px;
+  color: #333;
 }
 
 .card h1 {
@@ -187,7 +192,7 @@ const toggleComments = () => {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #fff;
+  background-color: transparent;
   border: none;
   border-radius: 50%;
   padding: 10px;
@@ -264,7 +269,7 @@ const toggleComments = () => {
 .comment-input {
   width: 96%;
   height: 5vh;
-  padding: 5px;  
+  padding: 5px;
   border: 2px solid transparent;
   border-radius: 5px;
   background: linear-gradient(45deg, #ede7e7, #fcd1e0), linear-gradient(45deg, #461212, #f01763);

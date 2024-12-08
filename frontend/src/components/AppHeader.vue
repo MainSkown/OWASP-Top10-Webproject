@@ -1,6 +1,6 @@
 <template>
   <div class="header">
-    <div class="left-header">
+    <div class="left-header" @click="$router.push('/')">
       <svg class="logo">
         <use xlink:href="/icon.svg"></use>
       </svg>
@@ -176,41 +176,6 @@ const logout = () => {
   border: 2px solid #461212;
   padding: 5px 10px;
   border-radius: 5px;
-}
-
-.dialog-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
-
-.dialog {
-  background: white;
-  color: black;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-.dialog h2 {
-  margin-top: 0;
-}
-
-.dialog form {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.dialog button {
-  margin-top: 10px;
 }
 
 .user-header {
