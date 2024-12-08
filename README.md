@@ -76,7 +76,8 @@ docker run -d -p 3306:3306 --name owasp-top10-db owasp-top10-db
 To stop the project you only need to run the following command:
 
 ```bash
-docker compose down
+docker compose down -v --rmi all
+# -v deletes volumes, --rmi all deletes all the images
 ```
 
 ### manual
